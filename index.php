@@ -20,13 +20,13 @@ $stmt = $mysqli->prepare("INSERT INTO provinsi (id_provinsi, nama) VALUES (?, ?)
 $stmt->bind_param("is", $id_provinsi, $nama);
 
 $stk = $mysqli->prepare("INSERT INTO region (id, id_provinsi, name_region) VALUES (?, ?, ?)");
-$stk->bind_param("iis", $idkab, $id_provinsi, $namakab);
+$stk->bind_param("sis", $idkab, $id_provinsi, $namakab);
 
 $stkc = $mysqli->prepare("INSERT INTO sub_region (id, id_region, id_provinsi, name_subregion) VALUES (?, ?, ?, ?)");
-$stkc->bind_param("iiis", $idkec, $idkab, $id_provinsi, $namasub);
+$stkc->bind_param("ssis", $idkec, $idkab, $id_provinsi, $namasub);
 
 $stkl = $mysqli->prepare("INSERT INTO village (id, id_subregion, id_region, id_provinsi, name_village) VALUES (?, ?, ?, ?, ?)");
-$stkl->bind_param("iiiis", $idkel, $idkec, $idkab, $id_provinsi, $namakel);
+$stkl->bind_param("sssis", $idkel, $idkec, $idkab, $id_provinsi, $namakel);
 
 
 foreach ($data as $value) {
@@ -36,16 +36,19 @@ foreach ($data as $value) {
     foreach (json_decode(file_get_contents($kabupaten), true) as  $vk) {
         $idkab = $vk['id'];
         $namakab = $vk['nama'];
+            // Eksekusi statement untuk setiap baris data
         $stk->execute();
         $kecamatan = "./kecamatan/$idkab.json";
         foreach (json_decode(file_get_contents($kecamatan), true) as  $vc) {
             $idkec = $vc['id'];
             $namasub = $vc['nama'];
+                // Eksekusi statement untuk setiap baris data
             $stkc->execute();
             $kelurahan = "./kelurahan/$idkec.json";
             foreach (json_decode(file_get_contents($kelurahan), true) as  $vl) {
                 $idkel = $vl['id'];
                 $namakel = $vl['nama'];
+                    // Eksekusi statement untuk setiap baris data
                 $stkl->execute();
             }
         }
